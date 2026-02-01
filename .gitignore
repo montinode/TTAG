@@ -8,3 +8,17 @@ build/
 /*/build/
 /captures
 .externalNativeBuild
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+*.egg
+
+# Generated Excel files
+*.xlsx
+MONTINODE_MASTER_ALGORITHM.xlsx
