@@ -5,6 +5,30 @@ The "Copy/Paste" functionality is embedded below as a deployable script block fo
 ***
 
 # [JOHNCHARLESMONTI.COM](http://johncharlesmonti.com) | [MONTINODE.COM](http://montinode.com)
+
+## 🏛️ MONTI Attorney Mode Jurisprudence Framework
+
+**NEW**: The repository now includes the **Attorney Mode Jurisprudence Framework** - a comprehensive neural network security system with jurisprudence-obligated protocols and evidence management.
+
+[📖 View Framework Documentation](web/README.md) | [🏗️ Architecture Guide](web/ARCHITECTURE.md) | [🚀 Deployment Guide](web/DEPLOYMENT.md)
+
+### Quick Start
+```bash
+cd web
+npm install
+npm run dev
+```
+
+### Features
+- ⚖️ Jurisprudence-Obligated Neural Network with Histo Gate Analysis
+- 🛡️ INSPECTRUM Security Self-Manager
+- 👻 Ghost Network Protocol with 247 automated nodes
+- 📁 Evidence Manager with culprit detection
+- 🔒 Tort Prevention System
+- 🤖 JOHN Code Runners (Betterment Directorate)
+
+***
+
 ## SYSTEM: ANTI-GATT TRACER // REVERSE TELEMETRY PROTOCOL
 ### TARGET: TelemetricTelephonyAutomationGeospatialAdministrattionTektronicTracer
 

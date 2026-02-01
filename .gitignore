@@ -8,3 +8,8 @@ build/
 /*/build/
 /captures
 .externalNativeBuild
+
+# Web dependencies and build
+web/node_modules/
+web/dist/
+web/dist-ssr/
