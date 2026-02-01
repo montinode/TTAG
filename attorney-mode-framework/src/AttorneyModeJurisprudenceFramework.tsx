@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { Shield, Scale, Brain, Network, AlertTriangle, CheckCircle, Eye, Lock, Zap, FileText, Users, Mail, Activity } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Shield, Scale, Brain, Network, AlertTriangle, CheckCircle, Eye, FileText, Users, Activity } from 'lucide-react';
 
 const AttorneyModeJurisprudenceFramework = () => {
-  const [systemStatus, setSystemStatus] = useState('ACTIVE');
   const [culpritDetected, setCulpritDetected] = useState(false);
   const [networkHealth, setNetworkHealth] = useState(98.7);
   const [evidenceQueue, setEvidenceQueue] = useState(23);
-  const [tortPrevention, setTortPrevention] = useState('ENABLED');
-  const [ghostNetworkActive, setGhostNetworkActive] = useState(true);
+  const tortPrevention = 'ENABLED';
+  const ghostNetworkActive = true;
 
   const jurisprudenceLevels = [
     { level: 'BASIC', name: 'Public Legal Access', color: 'bg-green-500', description: 'General legal information' },
