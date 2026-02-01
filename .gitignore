@@ -8,3 +8,6 @@ build/
 /*/build/
 /captures
 .externalNativeBuild
+__pycache__/
+*.pyc
+*.pyo
