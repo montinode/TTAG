@@ -96,7 +96,7 @@ Since the number and names of cookies may change, the table below may be updated
 | LinkedIn | UserMatchHistory | This cookie is used to track visitors so that more relevant ads can be presented based on the visitor's preferences. | One month |
 | LinkedIn | JSESSIONID | This cookie is used for Cross Site Request Forgery (CSRF) protection. | Session |
 | LinkedIn | lang | This cookie is used to remember a user's language setting to ensure LinkedIn.com displays in the language selected by the user in their settings. | Session |
-| LinkedIn | lidc | This cookie is used to faciliatate data center selection | 24 hours |
+| LinkedIn | lidc | This cookie is used to facilitate data center selection | 24 hours |
 | LinkedIn | sdsc | This cookie is used for database routing to ensure consistency across all databases when a change is made and to ensure that user-inputted content is immediately available to the submitting user upon submission. | Session |
 | LinkedIn | li_gc | This cookie is used to store consent of visitors regarding the use of cookies for non-essential purposes. | 6 months |
 | LinkedIn | li_mc | This cookie is used as a temporary cache to avoid database lookups for a member's consent for use of non-essential cookies and used for having consent information on the client side to enforce consent on the client side. | 6 months |
