@@ -41,6 +41,10 @@ import com.dynamixsoftware.printingsdk.ResultType;
 import com.dynamixsoftware.printingsdk.SmbFile;
 import com.dynamixsoftware.printingsdk.TransportType;
 
+import com.dynamixsoftware.printingsample.tracers.NfcTracer;
+import com.dynamixsoftware.printingsample.tracers.TelemetryTracer;
+import com.dynamixsoftware.printingsample.tracers.TelephonyTracer;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -62,6 +66,11 @@ public class PrintServiceFragment extends Fragment implements View.OnClickListen
     private IDiscoverSmb discoverSmb;
 
     private Handler mainHandler = new Handler(Looper.getMainLooper());
+    
+    // Multi-Protocol Tracers
+    private NfcTracer nfcTracer;
+    private TelemetryTracer telemetryTracer;
+    private TelephonyTracer telephonyTracer;
 
     @Override
     public void onAttach(final Context context) {
@@ -78,12 +87,18 @@ public class PrintServiceFragment extends Fragment implements View.OnClickListen
                 Toast.makeText(context.getApplicationContext(), "Service disconnected", Toast.LENGTH_SHORT).show();
             }
         });
+        
+        // Initialize and start tracers
+        initializeTracers(context);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         printingSdk.stopService();
+        
+        // Stop all tracers
+        stopTracers();
     }
 
     @Override
@@ -583,5 +598,43 @@ public class PrintServiceFragment extends Fragment implements View.OnClickListen
                 Toast.makeText(appContext, message, Toast.LENGTH_SHORT).show();
             }
         });
+    }
+    
+    /**
+     * Initialize multi-protocol tracers
+     */
+    private void initializeTracers(Context context) {
+        try {
+            // Initialize NFC tracer
+            nfcTracer = new NfcTracer(context);
+            nfcTracer.start();
+            
+            // Initialize Telemetry tracer
+            telemetryTracer = new TelemetryTracer(context);
+            telemetryTracer.start();
+            
+            // Initialize Telephony tracer
+            telephonyTracer = new TelephonyTracer(context);
+            telephonyTracer.start();
+            
+            Toast.makeText(context, "Multi-Protocol Tracers initialized", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(context, "Error initializing tracers: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+    
+    /**
+     * Stop all tracers
+     */
+    private void stopTracers() {
+        if (nfcTracer != null && nfcTracer.isRunning()) {
+            nfcTracer.stop();
+        }
+        if (telemetryTracer != null && telemetryTracer.isRunning()) {
+            telemetryTracer.stop();
+        }
+        if (telephonyTracer != null && telephonyTracer.isRunning()) {
+            telephonyTracer.stop();
+        }
     }
 }
