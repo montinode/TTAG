@@ -51,7 +51,8 @@ fi
 # Download each translation
 for lang in $TRANSLATIONS; do
     # Convert language code to Android format (e.g., pt-BR -> pt-rBR)
-    android_lang=$(echo "$lang" | sed 's/-\([A-Z]\)/-r\1/g')
+    # First convert to uppercase after hyphen, then add 'r' prefix
+    android_lang=$(echo "$lang" | awk -F'-' '{if (NF==2) print $1"-r"toupper($2); else print $0}')
     
     # Determine output directory
     if [ "$lang" = "en" ]; then

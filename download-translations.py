@@ -59,8 +59,16 @@ def download_translations(host, project, component, token, output_dir):
         if not lang:
             continue
         
-        # Convert language code to Android format (e.g., pt-BR -> pt-rBR)
-        android_lang = lang.replace('-', '-r') if '-' in lang and lang.split('-')[1].isupper() else lang
+        # Convert language code to Android format (e.g., pt-BR -> pt-rBR, pt-br -> pt-rBR)
+        if '-' in lang:
+            parts = lang.split('-')
+            if len(parts) == 2:
+                # Always uppercase the region code for Android
+                android_lang = f"{parts[0]}-r{parts[1].upper()}"
+            else:
+                android_lang = lang
+        else:
+            android_lang = lang
         
         # Determine output directory
         if lang == 'en':
