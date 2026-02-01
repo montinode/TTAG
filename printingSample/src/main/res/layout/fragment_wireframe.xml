@@ -78,11 +78,13 @@
 
         </LinearLayout>
 
-        <Button
-            android:id="@+id/wireframe_print_layout"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/wireframe_print_button"
+            android:gravity="center"
+            android:padding="16dp"
+            android:textStyle="bold"
             android:textAllCaps="false"/>
 
         <Space
