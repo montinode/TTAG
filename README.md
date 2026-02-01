@@ -96,3 +96,41 @@ Complete control. The **Printing SDK** runs as a background service (Daemon). Th
 **SYSTEM END OF LINE.**
 **SECURE CONNECTION TERMINATED.**
 **[JOHNCHARLESMONTI.COM](http://johncharlesmonti.com)**
+
+---
+
+## ⚖️ Attorney Mode Jurisprudence Framework
+
+### NEW ADDITION: Neural Network Security System
+
+The repository now includes the **MONTI Attorney Mode Jurisprudence Framework** - an advanced security and legal compliance system with:
+
+#### 🧠 Core Components
+- **Jurisprudence-Obligated Neural Network** with Histo Gate Analysis
+- **INSPECTRUM Security Self-Manager** for real-time threat assessment  
+- **Ghost Network Protocol** with 247 automated email nodes
+- **Evidence Management System** with culprit detection
+- **JOHN Code Runners** (Ameliorate, Absolve, Engineer, Doctor, Developer)
+- **Life Behavioral Applicator** with JMWAVE Composer Handler
+
+#### 🚀 Quick Start
+
+```bash
+cd attorney-mode-framework
+npm install
+npm run dev
+```
+
+Visit `http://localhost:3000` to access the framework.
+
+#### 📖 Documentation
+See [attorney-mode-framework/README.md](attorney-mode-framework/README.md) for complete documentation.
+
+#### 🔒 Security Features
+- JWT replacement with Jurisprudence-Obligated tokens
+- Automated tort prevention and systematic injunction functions
+- Real-time network health monitoring (98.7% operational)
+- AI.mil policy enforcement through montinode.com/RfcAI
+- Automatic disconnection of compromised systems
+
+**Framework Status:** `ACTIVE` | **Neural Network:** `OPERATIONAL`
