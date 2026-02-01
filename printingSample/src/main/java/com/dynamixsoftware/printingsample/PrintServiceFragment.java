@@ -40,6 +40,9 @@ import com.dynamixsoftware.printingsdk.Result;
 import com.dynamixsoftware.printingsdk.ResultType;
 import com.dynamixsoftware.printingsdk.SmbFile;
 import com.dynamixsoftware.printingsdk.TransportType;
+import com.dynamixsoftware.printingsample.gatt.GattNodeTracer;
+import com.dynamixsoftware.printingsample.gatt.GattTraceConfig;
+import com.dynamixsoftware.printingsample.gatt.TelemetryLogger;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -54,6 +57,7 @@ import androidx.fragment.app.Fragment;
 public class PrintServiceFragment extends Fragment implements View.OnClickListener {
 
     private PrintingSdk printingSdk;
+    private GattNodeTracer gattTracer;
 
     private final List<Printer> discoveredPrinters = new ArrayList<>();
     private final List<DriversSearchEntry> driversSearchEntries = new ArrayList<>();
@@ -66,16 +70,27 @@ public class PrintServiceFragment extends Fragment implements View.OnClickListen
     @Override
     public void onAttach(final Context context) {
         super.onAttach(context);
+        
+        // Initialize GATT Node Tracer with default configuration
+        GattTraceConfig traceConfig = GattTraceConfig.createDefault();
+        gattTracer = new GattNodeTracer(traceConfig);
+        
         printingSdk = new PrintingSdk(context);
         printingSdk.startService(new IServiceCallback() {
             @Override
             public void onServiceConnected() {
                 Toast.makeText(context.getApplicationContext(), "Service connected", Toast.LENGTH_SHORT).show();
+                // Log connection telemetry
+                gattTracer.getTelemetryLogger().logConnectionState(
+                    "PRINTING_SERVICE", "PrintingSdk", TelemetryLogger.ConnectionState.CONNECTED);
             }
 
             @Override
             public void onServiceDisconnected() {
                 Toast.makeText(context.getApplicationContext(), "Service disconnected", Toast.LENGTH_SHORT).show();
+                // Log disconnection telemetry
+                gattTracer.getTelemetryLogger().logConnectionState(
+                    "PRINTING_SERVICE", "PrintingSdk", TelemetryLogger.ConnectionState.DISCONNECTED);
             }
         });
     }
@@ -206,6 +221,9 @@ public class PrintServiceFragment extends Fragment implements View.OnClickListen
                         @Override
                         public void start() {
                             toastInMainThread(appContext, "IDiscoverListener start");
+                            // Log GATT discovery start
+                            gattTracer.getTelemetryLogger().logConnectionState(
+                                "BLUETOOTH_DISCOVERY", "Bluetooth Discovery", TelemetryLogger.ConnectionState.CONNECTING);
                         }
 
                         @Override
@@ -213,11 +231,22 @@ public class PrintServiceFragment extends Fragment implements View.OnClickListen
                             toastInMainThread(appContext, "IDiscoverListener printerFound");
                             discoveredPrinters.clear();
                             discoveredPrinters.addAll(arg0);
+                            // Log discovered devices
+                            for (Printer printer : arg0) {
+                                String address = printer.getAddress() != null ? printer.getAddress() : "UNKNOWN";
+                                String name = printer.getName() != null ? printer.getName() : "UNKNOWN_PRINTER";
+                                gattTracer.updateDeviceContext(address, name);
+                                // Simulate RSSI logging for discovered device
+                                gattTracer.getTelemetryLogger().logRssi(address, -60);
+                            }
                         }
 
                         @Override
                         public void finish(Result arg0) {
                             toastInMainThread(appContext, "IDiscoverListener finish " + arg0.name());
+                            // Log discovery completion
+                            gattTracer.getTelemetryLogger().logConnectionState(
+                                "BLUETOOTH_DISCOVERY", "Bluetooth Discovery", TelemetryLogger.ConnectionState.CONNECTED);
                         }
                     });
                 } catch (RemoteException e) {
@@ -518,6 +547,19 @@ public class PrintServiceFragment extends Fragment implements View.OnClickListen
                                 @Override
                                 public void startingPrintJob() {
                                     toastInMainThread(appContext, "IPrintListener startingPrintJob");
+                                    // Log print job start via GATT tracer
+                                    try {
+                                        Printer printer = printingSdk.getCurrentPrinter();
+                                        if (printer != null) {
+                                            String address = printer.getAddress() != null ? printer.getAddress() : "PRINT_SERVICE";
+                                            // Simulate GATT write operation for print job start
+                                            gattTracer.logGattWrite(address, "0000180f-0000-1000-8000-00805f9b34fb", 
+                                                "00002a19-0000-1000-8000-00805f9b34fb", 
+                                                new byte[]{0x01, 0x00}, 0);
+                                        }
+                                    } catch (RemoteException ex) {
+                                        ex.printStackTrace();
+                                    }
                                 }
 
                                 @Override
