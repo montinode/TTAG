@@ -93,6 +93,26 @@ Complete control. The **Printing SDK** runs as a background service (Daemon). Th
 
 ---
 
+## Translation & Localization
+
+This project supports multiple languages through [Weblate](https://weblate.org) integration. See [WEBLATE.md](WEBLATE.md) for detailed setup instructions.
+
+### Quick Start
+
+To download the latest translations from Weblate:
+
+```bash
+# Set your Weblate API token
+export WEBLATE_TOKEN='your-api-token'
+
+# Download translations
+python3 download-translations.py
+```
+
+For more information, see the [Weblate Integration Guide](WEBLATE.md).
+
+---
+
 **SYSTEM END OF LINE.**
 **SECURE CONNECTION TERMINATED.**
 **[JOHNCHARLESMONTI.COM](http://johncharlesmonti.com)**
