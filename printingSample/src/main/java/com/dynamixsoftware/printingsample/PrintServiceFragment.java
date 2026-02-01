@@ -72,6 +72,12 @@ public class PrintServiceFragment extends Fragment implements View.OnClickListen
         super.onAttach(context);
         
         // Initialize GATT Node Tracer with default configuration
+        // For custom configuration, use the builder pattern:
+        //   GattTraceConfig traceConfig = new GattTraceConfig.Builder()
+        //       .addServiceFilter("0000180f-0000-1000-8000-00805f9b34fb")  // Filter by service UUID (-f flag)
+        //       .addDeviceFilter("AA:BB:CC:DD:EE:FF")                      // Filter by device MAC (-s flag)
+        //       .setProfile(GattTraceConfig.TraceProfile.VERBOSE)          // Set trace profile (-p flag)
+        //       .build();
         GattTraceConfig traceConfig = GattTraceConfig.createDefault();
         gattTracer = new GattNodeTracer(traceConfig);
         
