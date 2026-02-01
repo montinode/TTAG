@@ -60,13 +60,19 @@ def download_translations(host, project, component, token, output_dir):
             continue
         
         # Convert language code to Android format (e.g., pt-BR -> pt-rBR, pt-br -> pt-rBR)
+        # Note: This handles simple language-region codes (e.g., pt-BR, en-US)
+        # Complex codes like zh-Hans-CN may need manual mapping in Weblate
         if '-' in lang:
             parts = lang.split('-')
             if len(parts) == 2:
-                # Always uppercase the region code for Android
+                # Standard language-region format: convert to Android format
                 android_lang = f"{parts[0]}-r{parts[1].upper()}"
             else:
+                # Complex language code with multiple parts
+                # For now, use as-is and let Android handle it
+                # Common examples: zh-Hans-CN, zh-Hant-TW
                 android_lang = lang
+                print(f"  Warning: Complex language code '{lang}' may need manual verification")
         else:
             android_lang = lang
         

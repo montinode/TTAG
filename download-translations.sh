@@ -39,6 +39,10 @@ fi
 
 # Fetch list of available translations
 echo "Fetching available translations..."
+# Note: This uses grep/cut for JSON parsing to avoid external dependencies.
+# If the API response format changes, consider using 'jq' for more robust parsing:
+# TRANSLATIONS=$(curl -s -H "Authorization: Token $WEBLATE_TOKEN" \
+#     "$WEBLATE_HOST/api/components/$PROJECT/$COMPONENT/translations/" | jq -r '.results[].language_code')
 TRANSLATIONS=$(curl -s -H "Authorization: Token $WEBLATE_TOKEN" \
     "$WEBLATE_HOST/api/components/$PROJECT/$COMPONENT/translations/" \
     | grep -o '"language_code":"[^"]*"' | cut -d'"' -f4)
