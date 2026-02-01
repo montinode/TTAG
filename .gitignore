@@ -8,3 +8,9 @@ build/
 /*/build/
 /captures
 .externalNativeBuild
+
+# Attorney Mode Framework - Node.js
+attorney-mode-framework/node_modules/
+attorney-mode-framework/dist/
+attorney-mode-framework/dist-ssr/
+attorney-mode-framework/*.local
