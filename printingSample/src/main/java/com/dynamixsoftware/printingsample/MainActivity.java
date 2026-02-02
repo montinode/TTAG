@@ -11,12 +11,18 @@ import androidx.viewpager.widget.ViewPager;
 
 public class MainActivity extends AppCompatActivity {
 
+    private AudioFingerprintScanner audioFingerprintScanner;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         FilesUtils.extractFilesFromAssets(this);
+        
+        // Initialize audio fingerprint scanner
+        audioFingerprintScanner = new AudioFingerprintScanner();
+        audioFingerprintScanner.initializeScan();
 
         this.<ViewPager>findViewById(R.id.pager).setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
             @Override
