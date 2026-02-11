@@ -5,7 +5,7 @@ This implementation provides a comprehensive security object that precludes all 
 
 ## Files Created
 
-### 1. AntiSpoofingValidator.java (543 lines)
+### 1. AntiSpoofingValidator.java (573 lines)
 **Location:** `printingSample/src/main/java/com/dynamixsoftware/printingsample/AntiSpoofingValidator.java`
 
 **Purpose:** Main security validation object that prevents multiple types of spoofing attacks.

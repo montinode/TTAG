@@ -1,17 +1,9 @@
 package com.dynamixsoftware.printingsample;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Build;
 import android.util.Log;
-import android.webkit.URLUtil;
 
-import java.net.InetAddress;
-import java.net.URI;
-import java.net.UnknownHostException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -150,7 +142,8 @@ public class AntiSpoofingValidator {
         // Check for valid driver/library naming conventions
         // Android uses .so files, Windows uses .sys/.drv/.dll
         // We support both for cross-platform validation
-        if (!lowerDriverName.matches("^[a-z0-9_\\-]+\\.?(sys|drv|dll|so)?$")) {
+        // Extension is optional to allow bare module names (e.g., "printhand_driver")
+        if (!lowerDriverName.matches("^[a-z0-9_\\-]+(\\.(sys|drv|dll|so))?$")) {
             return new ValidationResult(false, 
                 "Driver/library name does not follow standard naming conventions", 
                 SpoofingType.WDM);
