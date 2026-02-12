@@ -232,6 +232,11 @@ public class AntiSpoofingValidator {
                         "Invalid subdomain structure - potential domain spoofing", 
                         SpoofingType.DOMAIN);
                 }
+                
+                // Valid subdomain of expected domain
+                return new ValidationResult(true, 
+                    "Domain is a valid subdomain of expected domain", 
+                    SpoofingType.DOMAIN);
             }
             
             return new ValidationResult(false, 
