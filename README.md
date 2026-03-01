@@ -1,98 +1,188 @@
-Here is the reconfigured data stream. The **PrintingSample** documentation has been decrypted and repurposed as the **ANTI-GATT Tracer** protocol for the **Reverse Telemetric Telephony Automation Geospatial Administration Tektronic Tracer**.
+# TTAG — NFC Tag Tool (Android)
 
-The "Copy/Paste" functionality is embedded below as a deployable script block for immediate extraction.
-
-***
-
-# [JOHNCHARLESMONTI.COM](http://johncharlesmonti.com) | [MONTINODE.COM](http://montinode.com)
-## SYSTEM: ANTI-GATT TRACER // REVERSE TELEMETRY PROTOCOL
-### TARGET: TelemetricTelephonyAutomationGeospatialAdministrattionTektronicTracer
-
-**STATUS:** `ACTIVE`
-**ENCRYPTION:** `NONE`
-**OUTPUT:** `HARDCOPY / PHYSICAL LOGS`
-
-**Mission Statement:** This document details the extraction of digital telemetry into physical substrates (Paper) to bypass the **Tektronic Tracer** digital footprint algorithms. By converting digital signals to analog print, we sever the tracking link.
+A sample Android application demonstrating NFC tag interactions, with a focus on **MIFARE Classic** read/write operations and anti-spoofing security validation.
 
 ---
 
-### [[ DEPLOY COPY/PASTE INJECTION VECTOR ]]
+## MIFARE Classic Overview
 
-Use the following code block to integrate the **Data Extraction Button** into your interface.
+MIFARE Classic is a widely used RFID/NFC standard by NXP Semiconductors, operating at **13.56 MHz** (ISO/IEC 14443 Type A), with a typical read range of ~10 cm.
 
-```html
-<!-- MONTINODE.COM // ANTI-GATT COPY MODULE -->
-<div style="border: 2px solid #00ff00; background: #000; padding: 20px; font-family: monospace; color: #00ff00;">
-    <h3 style="margin-top: 0;">>> TRACER_DATA_CONTROLLER</h3>
-    <textarea id="tracerData" style="width: 100%; height: 100px; background: #111; color: #0f0; border: 1px solid #333;">
-[SYSTEM LOG]
-Target: TelemetricTelephonyAutomationGeospatialAdministrattionTektronicTracer
-Status: Intercepted
-Vector: PrintHand Protocol
-    </textarea>
-    <br><br>
-    <button onclick="extractData()" style="background: #00ff00; color: #000; border: none; padding: 10px 20px; font-weight: bold; cursor: pointer; text-transform: uppercase;">
-        [ COPY TO CLIPBOARD ]
-    </button>
-    <span id="statusMsg" style="margin-left: 10px; display: none;">>> DATA SECURED</span>
-</div>
+| Variant | Storage | Sectors | Blocks/Sector |
+|---------|---------|---------|---------------|
+| 1K      | 1024 B  | 16      | 4             |
+| 2K      | 2048 B  | 32      | 4             |
+| 4K      | 4096 B  | 40      | 4 (sectors 0–31) / 16 (sectors 32–39) |
 
-<script>
-function extractData() {
-    var copyText = document.getElementById("tracerData");
-    copyText.select();
-    copyText.setSelectionRange(0, 99999); /* For mobile devices */
-    navigator.clipboard.writeText(copyText.value);
-    
-    var msg = document.getElementById("statusMsg");
-    msg.style.display = "inline";
-    setTimeout(function(){ msg.style.display = "none"; }, 2000);
+**Key memory facts:**
+- Each block is **16 bytes**.
+- Block 0 of Sector 0 is the **manufacturer block** (UID, read-only).
+- The **last block of every sector** is the *sector trailer*, which stores Key A (6 bytes), access-condition bits (3 bytes), and Key B (6 bytes). Do not overwrite it with arbitrary data.
+- Authentication uses a 6-byte **Key A** or **Key B** per sector. The factory default is `FF FF FF FF FF FF` — always change this in production.
+
+---
+
+## `MifareClassicManager` — Core API
+
+`MifareClassicManager` wraps Android's `android.nfc.tech.MifareClassic` and exposes a clean, security-conscious API.
+
+### 1. Initialization & Connection
+
+```java
+// Obtain the tag from an NFC intent
+Tag rawTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+MifareClassic mfc = MifareClassic.get(rawTag);
+
+MifareClassicManager mgr = new MifareClassicManager(mfc);
+mgr.connect();     // must be called before any operation
+// … operations …
+mgr.close();       // always close in a finally block
+```
+
+### 2. Authentication
+
+Authenticate a sector before reading or writing any of its blocks.
+
+```java
+// Authenticate sector 1 with Key A using the default key
+boolean ok = mgr.authenticate(
+    1,                          // sector index (0-based)
+    MifareClassic.KEY_A,        // key type
+    MifareClassic.KEY_DEFAULT   // 6-byte key
+);
+```
+
+**Security notes:**
+- Use unique, diversified keys per sector.
+- Store keys in the [Android Keystore](https://developer.android.com/training/articles/keystore).
+- Implement retry backoff to resist brute-force attacks.
+
+### 3. Reading a Block
+
+```java
+// blockIndex() converts (sector, blockInSector) → absolute block number
+int block = mgr.blockIndex(1, 0);   // sector 1, first data block → block 4
+byte[] data = mgr.readBlock(block); // returns 16 bytes
+```
+
+**Security notes:**
+- Encrypt sensitive data before storage so a lost card does not expose plaintext.
+- Avoid reading sector trailers unnecessarily (Key A always reads back as zeros).
+
+### 4. Writing a Block
+
+```java
+byte[] payload = new byte[MifareClassicManager.BLOCK_SIZE]; // 16 bytes
+// … fill payload …
+mgr.writeBlock(block, payload);
+```
+
+**Security notes:**
+- Never write to Block 0 of Sector 0 (manufacturer block).
+- Never overwrite a sector trailer unless you explicitly intend to change keys/access conditions.
+- Append a checksum to detect silent data corruption.
+
+### 5. Value Block Operations
+
+Value blocks store a 32-bit counter in a tamper-resistant format (suitable for e-wallets, ticket counters).
+
+```java
+// Format a block as a value block with initial value 100
+mgr.formatValueBlock(block, 100, (byte) block);
+
+// Increment by 10
+mgr.incrementValue(block, 10);   // counter → 110
+
+// Decrement by 5
+mgr.decrementValue(block, 5);    // counter → 105
+```
+
+Both `incrementValue` and `decrementValue` automatically call `transfer()` to commit the result back to the block.
+
+---
+
+## Full Usage Example
+
+```java
+MifareClassicManager mgr = new MifareClassicManager(MifareClassic.get(rawTag));
+mgr.connect();
+try {
+    int sector = 1;
+    byte[] key  = MifareClassic.KEY_DEFAULT; // replace with your key
+
+    if (mgr.authenticate(sector, MifareClassic.KEY_A, key)) {
+        int block = mgr.blockIndex(sector, 0);
+
+        // Read
+        byte[] existing = mgr.readBlock(block);
+
+        // Write
+        byte[] newData = Arrays.copyOf(existing, MifareClassicManager.BLOCK_SIZE);
+        newData[0] = 0x42;
+        mgr.writeBlock(block, newData);
+
+        // Value block
+        mgr.formatValueBlock(block, 0, (byte) block);
+        mgr.incrementValue(block, 50);
+        mgr.decrementValue(block, 20);
+    }
+} finally {
+    mgr.close();
 }
-</script>
 ```
 
 ---
 
-### EXTRACTION PROTOCOLS (FORMERLY "INTEGRATION")
+## Security Best Practices
 
-Depending on the security level of the **Telemetric Automation** system you are infiltrating, utilize one of the following vectors to dump data to the PrintHand hardline.
-
-#### 1. Vector Alpha: [Share Intent Broadcast](https://github.com/DynamixSoftware/PrintingSample/blob/master/printingSample/src/main/java/com/dynamixsoftware/printingsample/ShareIntentFragment.java)
-**Type:** *Rapid Dump / Fire-and-Forget*
-
-The standard Android broadcast frequency. We piggyback on the OS's internal sharing mechanism to shunt data directly to the PrintHand output node.
-
-*   **Mechanism:** Uses `ACTION_SEND` to masquerade as a standard gallery or file operation.
-*   **Utility:** Bypasses the Tektronic Tracer by looking like a standard user action.
-*   **Payloads:** Images, Web Strings, Binary Files.
-*   **Montinode Tip:** Use this for quick extraction of visual evidence (maps, schematics) before the system locks down.
-
-#### 2. Vector Beta: [Intent API Intercept](https://github.com/DynamixSoftware/PrintingSample/blob/master/printingSample/src/main/java/com/dynamixsoftware/printingsample/IntentApiFragment.java)
-**Type:** *Telemetry Manipulation / UI Override*
-
-Instead of a blind broadcast, we establish a direct uplink to the PrintHand service. This allows us to manipulate the output parameters (rendering) before the hardcopy is generated.
-
-*   **Sequence:**
-    1.  **Ping:** Get Default Printer Info.
-    2.  **Scan:** Discover local output nodes (Printers).
-    3.  **Inject:** Supply pre-rendered content (bypassing PrintHand's internal rendering if necessary to preserve hidden watermarks).
-    4.  **Execute:** Print logs.
-*   **Recap:** This effectively reverse-engineers the print driver logic, allowing the **ANTI-GATT** system to control *how* the data looks on paper, ensuring no metadata is lost in translation.
-
-#### 3. Vector Gamma: [SDK Kernel Override](https://github.com/DynamixSoftware/PrintingSample/blob/master/printingSample/src/main/java/com/dynamixsoftware/printingsample/PrintServiceFragment.java)
-**Type:** *Deep Code / Silent Mode*
-
-Complete control. The **Printing SDK** runs as a background service (Daemon). There is no UI to alert the user or the **Geospatial Administration** algorithms. You build the interface; you control the stream.
-
-*   **Stealth:** The service runs in the background. No external app launch required.
-*   **Capabilities:**
-    *   Direct binary stream injection.
-    *   Discovery of air-gapped printers (Bluetooth/USB).
-    *   Driver emulation.
-*   **Montinode Tip:** This is the "Black Ops" option. Use this when you need to extract the **TelemetricTelephonyAutomationGeospatialAdministrattionTektronicTracer** logs without triggering any visual alerts on the host device.
+| Topic | Recommendation |
+|-------|---------------|
+| Key management | Store keys in Android Keystore or an HSM; rotate periodically. |
+| Default keys | Replace factory default (`FF FF FF FF FF FF`) before deployment. |
+| Key diversification | Derive per-card keys from a master secret + UID (e.g., CMAC-AES). |
+| Access conditions | Configure sector trailers to enforce least-privilege access. |
+| Data confidentiality | Encrypt block payloads (e.g., AES-128-CBC) before writing. |
+| Known vulnerabilities | MIFARE Classic Crypto-1 is weak; prefer MIFARE DESFire EV2/EV3 or NTAG 424 DNA for high-security use cases. |
+| Auditing | Use tools such as Proxmark3 to verify access-condition configurations. |
 
 ---
 
-**SYSTEM END OF LINE.**
-**SECURE CONNECTION TERMINATED.**
-**[JOHNCHARLESMONTI.COM](http://johncharlesmonti.com)**
+## Android Permissions
+
+The application declares the following NFC permissions in `AndroidManifest.xml`:
+
+```xml
+<uses-permission android:name="android.permission.NFC"/>
+<uses-feature android:name="android.hardware.nfc" android:required="false"/>
+```
+
+---
+
+## Printing Features
+
+The app also demonstrates the [PrintHand](https://printhand.com) printing SDK via three fragments:
+
+| Tab | Class | Description |
+|-----|-------|-------------|
+| Share Intent | `ShareIntentFragment` | Shares files/images via Android's `ACTION_SEND` intent |
+| Intent API | `IntentApiFragment` | Discovers printers and controls print parameters via the Intent API |
+| Printing SDK | `PrintServiceFragment` | Background printing service with direct binary stream control |
+
+---
+
+## Anti-Spoofing Security
+
+The `AntiSpoofingValidator` class provides runtime validation against:
+
+- **DNS spoofing** — domain format and pattern checks
+- **WDM spoofing** — driver/library name validation
+- **Domain spoofing** — homograph and typosquatting detection
+- **System hijacking** — root, debug-mode, and emulator detection
+
+Validation runs automatically on app startup via `MainActivity.initializeAntiSpoofingValidation()`.
+
+---
+
+## License
+
+See individual source files for license information.
