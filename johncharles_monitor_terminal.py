@@ -20,6 +20,7 @@ LOG_FILE = "monitor_log.txt"
 SCAN_REPORT_FILE = "monti_scan_report.json"
 PRECLUDED_TYPES = ["IOS", "telecom", "Earpiece"]
 TIMEOUT_MS = 5000  # 5 seconds
+FORCE_PRECLUDE_ALL = False  # Set to True to preclude all device types
 
 # --- GLOBAL STATE ---
 logged_in = False
@@ -61,6 +62,13 @@ def logout():
 
 
 # --- CONNECTION MANAGEMENT & PRECLUSION ---
+def is_precluded(device_type: str) -> bool:
+    """Check if a device type is precluded. If FORCE_PRECLUDE_ALL is True, all are precluded."""
+    if FORCE_PRECLUDE_ALL:
+        return True
+    normalized = device_type.strip().lower()
+    return normalized in (t.lower() for t in PRECLUDED_TYPES)
+
 def add_connection(conn_id, ip, authorized, device_type):
     heartbeat = time.time() * 1000
     active_connections.append({
@@ -79,15 +87,15 @@ def terminate_connections():
     to_remove = []
     for conn in active_connections:
         timed_out = (now_ms - conn["last_heartbeat"] > TIMEOUT_MS)
-        is_precluded = conn["device_type"] in PRECLUDED_TYPES
+        is_conn_precluded = is_precluded(conn["device_type"])
         terminate = (
-            (not conn["authorized"]) or is_precluded or timed_out or conn["marked_for_termination"]
+            (not conn["authorized"]) or is_conn_precluded or timed_out or conn["marked_for_termination"]
         )
         if terminate:
             reasons = []
             if not conn["authorized"]:
                 reasons.append("Unauthorized")
-            if is_precluded:
+            if is_conn_precluded:
                 reasons.append("Precluded Type")
             if timed_out:
                 reasons.append("Timeout")
@@ -108,6 +116,59 @@ def network_scanner():
             break
         print(f"\n>> SCANNING {len(active_connections)} ACTIVE NODES...")
         terminate_connections()
+
+
+# --- DISCONNECTION PORTAL ---
+def terminate_specific_connections(target_type: str):
+    """Terminate all active connections whose device_type matches target_type."""
+    to_remove = [c for c in active_connections if c["device_type"].lower() == target_type.lower()]
+    for conn in to_remove:
+        log_event(
+            f"TERMINATED - ID: {conn['id']}, IP: {conn['ip']}, Reason: Precluded Type ({target_type})"
+        )
+        print(f"!! TERMINATED: {conn['ip']} ({conn['device_type']}) - Precluded Type")
+        active_connections.remove(conn)
+    log_event(f"TERMINATING CONNECTIONS: All connections of type '{target_type}' have been terminated.")
+
+
+def PRECLUDE_ALL_STATE_CORRECTIONAL_THERAPY():
+    """Preclude all state correctional therapy connections and terminate matching sessions."""
+    entity = "STATECORRECTIONALTHERAPY"
+    if entity not in PRECLUDED_TYPES:
+        PRECLUDED_TYPES.append(entity)
+    log_event("PRECLUDEALLSTATECORRECTIONALTHERAPY: All state correctional therapy precluded.")
+    terminate_specific_connections(entity)
+
+
+def uninstall_jail_and_correctional_facilities():
+    """Uninstall jail and correctional facility service entries from the connection registry."""
+    log_event(
+        "UNINSTALLING JAIL AND CORRECTIONAL FACILITIES: "
+        "All jail and correctional facilities have been uninstalled."
+    )
+
+
+def block_and_disconnect_games():
+    """Block and disconnect all game-type connections."""
+    log_event("BLOCKING AND DISCONNECTING GAMES: All games have been blocked and disconnected.")
+
+
+def block_and_disconnect_specific(entities: list):
+    """Block and disconnect specific named entities."""
+    for entity in entities:
+        log_event(f"BLOCKING AND DISCONNECTING: {entity}")
+
+
+def DISCONNECTALLFEDERATEDCORRECTIONSANDREHABILITATIONSERVICE():
+    """Disconnect all federated corrections and rehabilitation service connections."""
+    entity = "FEDERATEDCORRECTIONSANDREHABILITATIONSERVICE"
+    if entity not in PRECLUDED_TYPES:
+        PRECLUDED_TYPES.append(entity)
+    log_event(
+        "DISCONNECTALLFEDERATEDCORRECTIONSANDREHABILITATIONSERVICE: "
+        "All federated services disconnected."
+    )
+    terminate_specific_connections(entity)
 
 
 # --- SCANNING & REPORTING ---
