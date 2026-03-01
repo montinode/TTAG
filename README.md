@@ -1,98 +1,84 @@
-Here is the reconfigured data stream. The **PrintingSample** documentation has been decrypted and repurposed as the **ANTI-GATT Tracer** protocol for the **Reverse Telemetric Telephony Automation Geospatial Administration Tektronic Tracer**.
+# PrintHand Printing Sample
 
-The "Copy/Paste" functionality is embedded below as a deployable script block for immediate extraction.
+Android sample application demonstrating how to integrate the [PrintHand](https://printhand.com) mobile printing SDK.
 
-***
+## Features
 
-# [JOHNCHARLESMONTI.COM](http://johncharlesmonti.com) | [MONTINODE.COM](http://montinode.com)
-## SYSTEM: ANTI-GATT TRACER // REVERSE TELEMETRY PROTOCOL
-### TARGET: TelemetricTelephonyAutomationGeospatialAdministrattionTektronicTracer
+- **Share Intent** – Print images, web pages, and arbitrary files via Android's standard share mechanism.
+- **Intent API** – Discover printers, obtain printer information, and submit print jobs directly via the PrintHand Intent API.
+- **Printing SDK** – Full SDK integration using the PrintHand background service for silent, programmatic printing.
+- **MIFARE Classic NFC** – Read and write MIFARE Classic NFC tags (access control data, counters, secure storage).
 
-**STATUS:** `ACTIVE`
-**ENCRYPTION:** `NONE`
-**OUTPUT:** `HARDCOPY / PHYSICAL LOGS`
+## MIFARE Classic NFC Support
 
-**Mission Statement:** This document details the extraction of digital telemetry into physical substrates (Paper) to bypass the **Tektronic Tracer** digital footprint algorithms. By converting digital signals to analog print, we sever the tracking link.
+The app includes `MifareClassicHelper`, a utility class for all core MIFARE Classic tag operations.
 
----
+### Supported Operations
 
-### [[ DEPLOY COPY/PASTE INJECTION VECTOR ]]
+| Operation | Method | Description |
+|-----------|--------|-------------|
+| Connect | `connect(Tag)` | Open a connection to a MIFARE Classic tag |
+| Authenticate | `authenticateSector(mfc, block, keyType, key)` | Authenticate a sector with Key A or Key B |
+| Read | `readBlock(mfc, block)` | Read 16 bytes from a block |
+| Write | `writeBlock(mfc, block, data)` | Write 16 bytes to a block |
+| Increment | `increment(mfc, block, amount)` | Add to a value block |
+| Decrement | `decrement(mfc, block, amount)` | Subtract from a value block |
+| Transfer | `transfer(mfc, block)` | Commit a staged increment/decrement |
+| Restore | `restore(mfc, block)` | Load a value block into the transfer buffer |
+| Close | `closeQuietly(mfc)` | Close the tag connection |
 
-Use the following code block to integrate the **Data Extraction Button** into your interface.
+### Quick Start
 
-```html
-<!-- MONTINODE.COM // ANTI-GATT COPY MODULE -->
-<div style="border: 2px solid #00ff00; background: #000; padding: 20px; font-family: monospace; color: #00ff00;">
-    <h3 style="margin-top: 0;">>> TRACER_DATA_CONTROLLER</h3>
-    <textarea id="tracerData" style="width: 100%; height: 100px; background: #111; color: #0f0; border: 1px solid #333;">
-[SYSTEM LOG]
-Target: TelemetricTelephonyAutomationGeospatialAdministrattionTektronicTracer
-Status: Intercepted
-Vector: PrintHand Protocol
-    </textarea>
-    <br><br>
-    <button onclick="extractData()" style="background: #00ff00; color: #000; border: none; padding: 10px 20px; font-weight: bold; cursor: pointer; text-transform: uppercase;">
-        [ COPY TO CLIPBOARD ]
-    </button>
-    <span id="statusMsg" style="margin-left: 10px; display: none;">>> DATA SECURED</span>
-</div>
+```java
+// Must run on a background thread – not the UI thread.
+MifareClassic mfc = MifareClassicHelper.connect(tag);
+if (mfc == null) return; // not a MIFARE Classic tag
 
-<script>
-function extractData() {
-    var copyText = document.getElementById("tracerData");
-    copyText.select();
-    copyText.setSelectionRange(0, 99999); /* For mobile devices */
-    navigator.clipboard.writeText(copyText.value);
-    
-    var msg = document.getElementById("statusMsg");
-    msg.style.display = "inline";
-    setTimeout(function(){ msg.style.display = "none"; }, 2000);
+try {
+    byte[] key = MifareClassicHelper.DEFAULT_KEY; // replace with your per-sector key
+    int block = 4; // first data block of sector 1
+
+    // Authenticate
+    boolean ok = MifareClassicHelper.authenticateSector(
+            mfc, block, MifareClassicHelper.KEY_TYPE_A, key);
+    if (!ok) return;
+
+    // Read
+    byte[] data = MifareClassicHelper.readBlock(mfc, block);
+
+    // Write
+    byte[] payload = new byte[MifareClassicHelper.BLOCK_SIZE]; // 16 bytes
+    System.arraycopy(data, 0, payload, 0, payload.length);     // modify as needed
+    MifareClassicHelper.writeBlock(mfc, block, payload);
+
+    // Value-block increment and commit
+    MifareClassicHelper.increment(mfc, block, 1);
+    MifareClassicHelper.transfer(mfc, block);
+} catch (IOException e) {
+    Log.e(TAG, "NFC I/O error", e);
+} finally {
+    MifareClassicHelper.closeQuietly(mfc);
 }
-</script>
 ```
 
----
+### Security Notes
 
-### EXTRACTION PROTOCOLS (FORMERLY "INTEGRATION")
+- Replace the default key (`FF FF FF FF FF FF`) with unique per-sector keys in production.
+- Derive sector keys from a master key and the tag UID (key diversification) so that compromising one tag does not expose others.
+- All NFC I/O must run on a background thread.
+- MIFARE Classic uses the proprietary Crypto-1 cipher, which has known weaknesses. Migrate to MIFARE DESFire EV2/EV3 or NTAG 424 DNA for high-security applications.
 
-Depending on the security level of the **Telemetric Automation** system you are infiltrating, utilize one of the following vectors to dump data to the PrintHand hardline.
+## Integration
 
-#### 1. Vector Alpha: [Share Intent Broadcast](https://github.com/DynamixSoftware/PrintingSample/blob/master/printingSample/src/main/java/com/dynamixsoftware/printingsample/ShareIntentFragment.java)
-**Type:** *Rapid Dump / Fire-and-Forget*
+Add the PrintHand SDK to your `build.gradle`:
 
-The standard Android broadcast frequency. We piggyback on the OS's internal sharing mechanism to shunt data directly to the PrintHand output node.
+```groovy
+dependencies {
+    implementation 'com.dynamixsoftware.intentapi:intentAPI:12'
+    implementation 'com.dynamixsoftware.printingsdk:printingSDK:12'
+}
+```
 
-*   **Mechanism:** Uses `ACTION_SEND` to masquerade as a standard gallery or file operation.
-*   **Utility:** Bypasses the Tektronic Tracer by looking like a standard user action.
-*   **Payloads:** Images, Web Strings, Binary Files.
-*   **Montinode Tip:** Use this for quick extraction of visual evidence (maps, schematics) before the system locks down.
+## License
 
-#### 2. Vector Beta: [Intent API Intercept](https://github.com/DynamixSoftware/PrintingSample/blob/master/printingSample/src/main/java/com/dynamixsoftware/printingsample/IntentApiFragment.java)
-**Type:** *Telemetry Manipulation / UI Override*
-
-Instead of a blind broadcast, we establish a direct uplink to the PrintHand service. This allows us to manipulate the output parameters (rendering) before the hardcopy is generated.
-
-*   **Sequence:**
-    1.  **Ping:** Get Default Printer Info.
-    2.  **Scan:** Discover local output nodes (Printers).
-    3.  **Inject:** Supply pre-rendered content (bypassing PrintHand's internal rendering if necessary to preserve hidden watermarks).
-    4.  **Execute:** Print logs.
-*   **Recap:** This effectively reverse-engineers the print driver logic, allowing the **ANTI-GATT** system to control *how* the data looks on paper, ensuring no metadata is lost in translation.
-
-#### 3. Vector Gamma: [SDK Kernel Override](https://github.com/DynamixSoftware/PrintingSample/blob/master/printingSample/src/main/java/com/dynamixsoftware/printingsample/PrintServiceFragment.java)
-**Type:** *Deep Code / Silent Mode*
-
-Complete control. The **Printing SDK** runs as a background service (Daemon). There is no UI to alert the user or the **Geospatial Administration** algorithms. You build the interface; you control the stream.
-
-*   **Stealth:** The service runs in the background. No external app launch required.
-*   **Capabilities:**
-    *   Direct binary stream injection.
-    *   Discovery of air-gapped printers (Bluetooth/USB).
-    *   Driver emulation.
-*   **Montinode Tip:** This is the "Black Ops" option. Use this when you need to extract the **TelemetricTelephonyAutomationGeospatialAdministrattionTektronicTracer** logs without triggering any visual alerts on the host device.
-
----
-
-**SYSTEM END OF LINE.**
-**SECURE CONNECTION TERMINATED.**
-**[JOHNCHARLESMONTI.COM](http://johncharlesmonti.com)**
+See the upstream [DynamixSoftware/PrintingSample](https://github.com/DynamixSoftware/PrintingSample) repository for license information.
