@@ -10,3 +10,9 @@ build/
 .externalNativeBuild
 __pycache__/
 *.pyc
+
+# PWA build artifacts and dependencies
+pwa/node_modules/
+pwa/dist/
+pwa/.env
+pwa/.env.local
