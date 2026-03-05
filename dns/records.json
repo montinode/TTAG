@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "DNS record configuration templates for johncharlesmonti.com. Replace placeholder values (marked with <...>) before applying to your DNS provider.",
+  "zone": "johncharlesmonti.com",
+  "records": [
+    {
+      "type": "SOA",
+      "name": "@",
+      "ttl": 3600,
+      "mname": "ns1.johncharlesmonti.com",
+      "rname": "hostmaster.johncharlesmonti.com",
+      "serial": 2026030501,
+      "refresh": 7200,
+      "retry": 3600,
+      "expire": 1209600,
+      "minimum": 300,
+      "description": "Start of Authority – primary nameserver and zone serial"
+    },
+    {
+      "type": "NS",
+      "name": "@",
+      "ttl": 86400,
+      "value": "ns1.johncharlesmonti.com",
+      "description": "Primary nameserver for the zone"
+    },
+    {
+      "type": "NS",
+      "name": "@",
+      "ttl": 86400,
+      "value": "ns2.johncharlesmonti.com",
+      "description": "Secondary nameserver for the zone"
+    },
+    {
+      "type": "A",
+      "name": "@",
+      "ttl": 300,
+      "value": "<IPv4-address>",
+      "description": "Root domain – replace with the server public IPv4 address"
+    },
+    {
+      "type": "A",
+      "name": "pwa",
+      "ttl": 300,
+      "value": "<IPv4-address>",
+      "description": "PWA subdomain – replace with the server public IPv4 address"
+    },
+    {
+      "type": "A",
+      "name": "eth",
+      "ttl": 300,
+      "value": "<IPv4-address>",
+      "description": "Private Ethereum JSON-RPC node – replace with the server public IPv4 address"
+    },
+    {
+      "type": "AAAA",
+      "name": "@",
+      "ttl": 300,
+      "value": "<IPv6-address>",
+      "description": "Root domain – replace with the server public IPv6 address"
+    },
+    {
+      "type": "AAAA",
+      "name": "pwa",
+      "ttl": 300,
+      "value": "<IPv6-address>",
+      "description": "PWA subdomain IPv6 – replace with the server public IPv6 address"
+    },
+    {
+      "type": "TXT",
+      "name": "@",
+      "ttl": 3600,
+      "value": "v=spf1 ip4:<IPv4-address> ~all",
+      "description": "SPF record – authorise the server to send email on behalf of the domain"
+    },
+    {
+      "type": "TXT",
+      "name": "@",
+      "ttl": 3600,
+      "value": "v=DMARC1; p=reject; rua=mailto:dmarc@johncharlesmonti.com",
+      "description": "DMARC policy – reject unauthenticated mail and request aggregate reports"
+    },
+    {
+      "type": "TXT",
+      "name": "_dnslink",
+      "ttl": 3600,
+      "value": "dnslink=/ipfs/<IPFS-CID>",
+      "description": "DNSLink record for IPFS/IPNS content addressing (optional)"
+    },
+    {
+      "type": "TLSA",
+      "name": "_443._tcp.pwa",
+      "ttl": 300,
+      "usage": 3,
+      "selector": 1,
+      "matching_type": 1,
+      "certificate_association_data": "<sha256-hex-of-subject-public-key-info>",
+      "rdata": "3 1 1 <sha256-hex-of-subject-public-key-info>",
+      "description": "DANE TLSA record for HTTPS on pwa.johncharlesmonti.com (DANE-EE, SPKI, SHA-256). Generate the hash with: openssl x509 -in cert.pem -noout -pubkey | openssl pkey -pubin -outform DER | openssl dgst -sha256"
+    },
+    {
+      "type": "TLSA",
+      "name": "_443._tcp.eth",
+      "ttl": 300,
+      "usage": 3,
+      "selector": 1,
+      "matching_type": 1,
+      "certificate_association_data": "<sha256-hex-of-subject-public-key-info>",
+      "rdata": "3 1 1 <sha256-hex-of-subject-public-key-info>",
+      "description": "DANE TLSA record for HTTPS on eth.johncharlesmonti.com (private Ethereum RPC node)"
+    },
+    {
+      "type": "CAA",
+      "name": "@",
+      "ttl": 3600,
+      "flags": 0,
+      "tag": "issue",
+      "value": "letsencrypt.org",
+      "description": "Certification Authority Authorisation – permit Let's Encrypt to issue certificates"
+    },
+    {
+      "type": "CAA",
+      "name": "@",
+      "ttl": 3600,
+      "flags": 0,
+      "tag": "issuewild",
+      "value": ";",
+      "description": "Prohibit wildcard certificate issuance by any CA"
+    }
+  ],
+  "notes": {
+    "TLSA": "TLSA records implement DNS-Based Authentication of Named Entities (DANE, RFC 6698). They bind a TLS certificate to a domain name through DNSSEC, eliminating reliance on the traditional CA trust hierarchy. Note: the problem statement referred to these as 'TSLA' records, which is a misspelling of the correct DNS record type name 'TLSA'.",
+    "MAGP": "Once the montinode/MAGP service is deployed, add an additional A/AAAA record for its hostname and a corresponding TLSA record for its HTTPS endpoint.",
+    "DNSSEC": "Enable DNSSEC on your zone before publishing TLSA records. DNSSEC provides the chain of trust that DANE relies on."
+  }
+}

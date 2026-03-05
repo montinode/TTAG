@@ -1,0 +1,32 @@
+{
+  "name": "ttag-pwa",
+  "version": "1.0.0",
+  "description": "TTAG Progressive Web Application – security monitoring dashboard with Ethereum integration",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "ethers": "^6.16.0"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^6.2.4",
+    "svelte": "^5.53.7",
+    "vite": "^7.3.1",
+    "vite-plugin-pwa": "^1.2.0"
+  },
+  "peerDependenciesMeta": {
+    "magp": {
+      "optional": true
+    }
+  },
+  "overrides": {
+    "serialize-javascript": ">=7.0.4",
+    "@rollup/plugin-terser": ">=1.0.0"
+  },
+  "notes": {
+    "magp": "Install the MAGP integration library with: npm install github:montinode/MAGP (requires repository access)"
+  }
+}

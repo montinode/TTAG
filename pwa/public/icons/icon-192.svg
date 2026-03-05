@@ -1,0 +1,6 @@
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'>
+  <rect width='192' height='192' rx='24' fill='#0f0f23'/>
+  <path d='M96 24 L156 52 L156 100 C156 132 126 160 96 168 C66 160 36 132 36 100 L36 52 Z' fill='#0f3460'/>
+  <path d='M96 44 L144 68 L144 104 C144 128 122 150 96 158 C70 150 48 128 48 104 L48 68 Z' fill='#1a1a2e'/>
+  <text x='96' y='118' text-anchor='middle' font-size='48' fill='#a8daff' font-family='sans-serif' font-weight='bold'>T</text>
+</svg>
