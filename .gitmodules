@@ -1,3 +1,6 @@
 [submodule "svelte"]
 	path = svelte
 	url = https://github.com/digitalvirtuallife/svelte.git
+[submodule "network_monitor"]
+	path = network_monitor
+	url = https://github.com/moayad-star/network_monitor.git
