@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.reown.sample.dapp">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <queries>
+        <package android:name="io.metamask" />
+        <package android:name="com.wallet.crypto.trustapp" />
+        <package android:name="io.gnosis.safe" />
+        <package android:name="me.rainbow" />
+        <package android:name="com.reown.sample.wallet" />
+    </queries>
+
+    <application
+        android:name=".DappSampleApp"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.DappSample">
+
+        <activity
+            android:name=".ui.DappSampleActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:label="@string/app_name">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!-- Deep link for WalletConnect responses -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="kotlin-dapp-wc" android:host="request" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>
