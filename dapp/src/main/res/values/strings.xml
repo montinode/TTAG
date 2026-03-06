@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Kotlin dApp</string>
+    <string name="title_select_chains">Select Chains</string>
+    <string name="subtitle_select_chains">Choose which blockchains you want to interact with via WalletConnect.</string>
+    <string name="btn_connect">Connect Wallet</string>
+    <string name="title_active_session">Active Session</string>
+    <string name="label_connected_wallet">Connected wallet</string>
+    <string name="label_accounts">Accounts</string>
+    <string name="btn_ping">Ping</string>
+    <string name="btn_personal_sign">personal_sign</string>
+    <string name="btn_disconnect">Disconnect</string>
+    <string name="title_scan_qr">Connect with WalletConnect</string>
+    <string name="subtitle_scan_qr">Copy the URI below and paste it into your wallet app, or tap \"Open Wallet\" to launch it directly.</string>
+    <string name="btn_copy_uri">Copy URI</string>
+    <string name="btn_open_wallet">Open Wallet</string>
+    <string name="btn_close">Close</string>
+</resources>
