@@ -50,5 +50,9 @@
     <string name="message_success_license_activation">License activation success</string>
     <string name="message_share_image_cancelled">Share image cancelled</string>
     <string name="ok">OK</string>
+    <string name="wireframe">Wireframe</string>
+    <string name="wireframe_title">Wireframe Layout Viewer</string>
+    <string name="wireframe_description">This demonstrates a wireframe visualization of a printable layout structure. Wireframes show the skeletal framework of a document or UI.</string>
+    <string name="wireframe_print_button">Preview Wireframe Print</string>
 
 </resources>

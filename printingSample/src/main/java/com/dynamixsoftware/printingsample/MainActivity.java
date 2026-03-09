@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         this.<ViewPager>findViewById(R.id.pager).setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
             @Override
             public int getCount() {
-                return 3;
+                return 4;
             }
 
             @NonNull
@@ -41,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
                         return new IntentApiFragment();
                     case 2:
                         return new PrintServiceFragment();
+                    case 3:
+                        return new WireframeFragment();
                 }
             }
 
@@ -55,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
                         return getString(R.string.intent_api);
                     case 2:
                         return getString(R.string.printing_sdk);
+                    case 3:
+                        return getString(R.string.wireframe);
                 }
             }
         });
