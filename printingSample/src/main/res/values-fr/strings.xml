@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- French translations will be downloaded from Weblate -->
+    <!-- This is a placeholder file demonstrating the structure -->
+    <string name="app_name">PrintingSample</string>
+</resources>

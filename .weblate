@@ -1,0 +1,11 @@
+[weblate]
+url = https://hosted.weblate.org/api/
+translation = montinode/ttag/android-strings
+
+[files]
+base = printingSample/src/main/res/values/strings.xml
+template = printingSample/src/main/res/values/strings.xml
+
+[format]
+format = aresource
+file_mask = printingSample/src/main/res/values-*/strings.xml
