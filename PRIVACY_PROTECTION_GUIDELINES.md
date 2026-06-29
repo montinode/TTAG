@@ -3,7 +3,7 @@
 These rules apply to any handling of personal, financial, device, or account metadata in this repository or related documentation.
 
 ## Core rules
-- Collect and record only the minimum metadata needed for an authorized business or security purpose.
+- Collect and record only the minimum metadata needed for a purpose approved by the authorized owner or delegated security/compliance reviewer.
 - Prefer labels, masked references, and status fields over raw identifiers.
 - Do not commit plaintext secrets, private keys, seed phrases, raw credentials, full account numbers, or sensitive personal identifiers.
 - Limit access using least privilege, role-based approvals, and auditable review paths.
