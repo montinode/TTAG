@@ -46,7 +46,7 @@ Keep the validation semantics stable for:
 - `validateDNSSpoofing(...)`
 - `validateWDMSpoofing(...)`
 - `validateDomainSpoofing(...)`
-- `validateSyxhlikie(...)`
+- `validateSyxhlikie(...)` (preserve the repository’s existing method name and behavior)
 - `validateAll(...)`
 
 These methods provide the security verdicts used by callers. Any telemetry added here must not weaken fail-secure behavior or convert security failures into soft warnings.
@@ -74,7 +74,7 @@ Current telemetry-adjacent paths in the repository include:
 - JSON scan output via `write_json_report()` in `monti.py`
 - operator-facing console summaries via `print_summary()` in `monti.py`
 - event logging via `log_event()` in `johncharles_monitor_terminal.py`
-- persisted monitor scan output via `SCAN_REPORT_FILE` in `johncharles_monitor_terminal.py`
+- persisted monitor scan output via the `SCAN_REPORT_FILE` file-path constant in `johncharles_monitor_terminal.py`
 - Android diagnostic logging via `Log.d`, `Log.w`, and `Log.e` in `AntiSpoofingValidator.java` and `MifareClassicHelper.java`
 
 These are the safest places to extend first because they are already intended for reporting, diagnostics, or audit support.
