@@ -96,6 +96,7 @@ try {
 - Derive sector keys from a master key and the tag UID (key diversification) so that compromising one tag does not expose others.
 - All NFC I/O must run on a background thread.
 - MIFARE Classic uses the proprietary Crypto-1 cipher, which has known weaknesses. Migrate to MIFARE DESFire EV2/EV3 or NTAG 424 DNA for high-security applications.
+- Related privacy docs: [IMMORTALMONTI_PROFILE.md](IMMORTALMONTI_PROFILE.md), [PRIVACY_PROTECTION_GUIDELINES.md](PRIVACY_PROTECTION_GUIDELINES.md)
 
 ## Integration
 
