@@ -10,3 +10,8 @@ build/
 .externalNativeBuild
 __pycache__/
 *.pyc
+
+# Environment / secrets – never commit real credentials
+.env
+.env.*
+!.env.example
